@@ -1,0 +1,11 @@
+#!/bin/bash
+
+mysqld_safe &
+mysqladmin --silent --wait=30 ping || exit 1
+mysql -e 'CREATE DATABASE netrunnerdb;'
+cd /netrunnerdb && php app/console doctrine:schema:update --force
+zcat /netrunnerdb/netrunnerdb-2014-06-07.sql.gz | mysql netrunnerdb
+zcat /netrunnerdb/netrunnerdb_cards_2014-08-27.sql.gz | mysql netrunnerdb
+
+mysql netrunnerdb -e "INSERT INTO user VALUES ( 1,'root','root','a@a.com','a@a.com',1,'biodzvxi0pw080osscww04okkc8kk40','Jshx2fxiTzL3+FlYYYayd+H1ydleueVBOpSQvu2+JddMuwQOn8kxM1iD9E9FvfsQEDNWDzCPQzQN69zWUtA1rw==',NULL,0,0,NULL,'DljSnY5R98wVR6MMlPI4lb-pnEPO7iGe40USNDwLI6M',NULL,'a:0:{}',0,NULL,1,'neutral','2014-09-1513:01:51',NULL,NULL,NULL,NULL,0,1,1,1,1,1 )"
+mysqladmin shutdown
